@@ -1,5 +1,3 @@
-"""Custom CNN for multi-class skin disease image classification."""
-
 from __future__ import annotations
 
 import torch.nn as nn
