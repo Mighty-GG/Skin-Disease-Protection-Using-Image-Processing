@@ -27,34 +27,34 @@ class Config:
     image_size: int = 224
 
     class_names: List[str] = field(default_factory=lambda: [
-        "Acne",
-        "Actinic_Keratosis",
-        "Atopic_Dermatitis",
-        "Basal_Cell_Carcinoma",
-        "Benign_Keratosis",
-        "Bullous_Disease",
-        "Cellulitis",
-        "Contact_Dermatitis",
-        "Drug_Eruption",
-        "Eczema",
-        "Fungal_Infection",
-        "Herpes",
-        "Lupus",
-        "Melanoma",
-        "Nevus",
-        "Psoriasis",
-        "Rosacea",
-        "Scabies",
-        "Seborrheic_Keratosis",
-        "Tinea",
-        "Urticaria",
-        "Vitiligo",
-    ])
+    "Acne",
+    "Actinic_Keratosis",
+    "Benign_tumors",
+    "Bullous",
+    "Candidiasis",
+    "DrugEruption",
+    "Eczema",
+    "Infestations_Bites",
+    "Lichen",
+    "Lupus",
+    "Moles",
+    "Psoriasis",
+    "Rosacea",
+    "Seborrh_Keratoses",
+    "SkinCancer",
+    "Sun_Sunlight_Damage",
+    "Tinea",
+    "Unknown_Normal",
+    "Vascular_Tumors",
+    "Vasculitis",
+    "Vitiligo",
+    "Warts",
+])
 
     
     #dataloader settings
-    batch_size: int = 32
-    num_workers: int = 4
+    batch_size: int = 16
+    num_workers: int = 0
     pin_memory: bool = True
 
     
@@ -64,8 +64,8 @@ class Config:
     random_seed: int = 42
 
     #training settings
-    epochs: int = 25
-    learning_rate: float = 1e-3
+    epochs: int = 5
+    learning_rate: float = 1e-4
     weight_decay: float = 1e-4
 
     optimizer_name: str = "adam"
@@ -77,7 +77,7 @@ class Config:
     patience: int = 5
 
     #model settings
-    model_name: str = "custom_cnn"
+    model_name: str = "resnet50"
     dropout_rate: float = 0.5
 
     use_pretrained: bool = True
@@ -85,9 +85,12 @@ class Config:
 
     #imbalance settings
     use_class_weights: bool = True
-    use_weighted_sampler: bool = False
-    use_focal_loss: bool = False
+    use_weighted_sampler: bool = False 
+    use_focal_loss: bool = True
     focal_loss_gamma: float = 2.0
+
+    #experiment settings
+    experiment_name: str = "baseline"
 
     #saving settings
     save_best_model: bool = True

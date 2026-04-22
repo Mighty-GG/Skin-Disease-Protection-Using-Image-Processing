@@ -1,5 +1,3 @@
-# imbalance_utils.py
-
 from typing import Dict, List, Tuple
 
 import torch
@@ -8,9 +6,8 @@ from torch.utils.data import Subset, WeightedRandomSampler
 
 
 def compute_class_counts_from_dataset(dataset, num_classes: int) -> List[int]:
-    """
-    Compute class counts from a full dataset that stores samples as (path, label).
-    """
+    #compute class counts from a full dataset that stores samples as (path, label)
+    
     class_counts = [0] * num_classes
 
     for _, label in dataset.samples:
@@ -20,9 +17,7 @@ def compute_class_counts_from_dataset(dataset, num_classes: int) -> List[int]:
 
 
 def compute_class_counts_from_subset(subset: Subset, num_classes: int) -> List[int]:
-    """
-    Compute class counts from a torch.utils.data.Subset.
-    """
+    #compute class counts from a torch.utils.data.Subset 
     class_counts = [0] * num_classes
 
     for idx in subset.indices:
