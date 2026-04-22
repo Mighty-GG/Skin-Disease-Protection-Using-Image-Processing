@@ -31,9 +31,7 @@ def class_counts_to_distribution(
     class_counts: List[int],
     class_names: List[str],
 ) -> Dict[str, int]:
-    """
-    Convert class counts into a readable dictionary.
-    """
+    #convert class counts into a readable dictionary
     if len(class_counts) != len(class_names):
         raise ValueError("class_counts and class_names must have the same length.")
 
@@ -46,20 +44,7 @@ def compute_class_weights(
     normalize: bool = True,
     device: str = "cpu",
 ) -> torch.Tensor:
-    """
-    Compute class weights for weighted loss.
-
-    Args:
-        class_counts: Number of samples in each class.
-        method:
-            - "inverse": weight = 1 / count
-            - "balanced": weight = total_samples / (num_classes * count)
-        normalize: Whether to normalize weights so they average to 1.
-        device: Device to place the tensor on.
-
-    Returns:
-        Tensor of shape [num_classes]
-    """
+    #compute class weights for weighted loss
     if any(count < 0 for count in class_counts):
         raise ValueError("class_counts cannot contain negative values.")
 
@@ -98,10 +83,7 @@ def create_weighted_sampler_from_subset(
     subset: Subset,
     num_classes: int,
 ) -> WeightedRandomSampler:
-    """
-    Create a WeightedRandomSampler from a training subset.
-    Each sample gets a weight inverse to its class frequency.
-    """
+    #create a WeightedRandomSampler from a training subset. each sample gets a weight inverse to its class frequency
     class_counts = compute_class_counts_from_subset(subset, num_classes=num_classes)
 
     class_weights = []
@@ -128,19 +110,8 @@ def create_weighted_sampler_from_subset(
 
 
 class FocalLoss(nn.Module):
-    """
-    Multi-class Focal Loss for imbalanced classification.
-
-    Formula:
-        FL(pt) = -alpha * (1 - pt)^gamma * log(pt)
-
-    Notes:
-    - Works for multi-class classification with logits input.
-    - alpha can be:
-        None -> no class weighting
-        Tensor[num_classes] -> per-class weights
-    """
-
+    #multi-class Focal Loss for imbalanced classification. Formula: FL(pt) = -alpha * (1 - pt)^gamma * log(pt)
+    
     def __init__(
         self,
         alpha: torch.Tensor = None,
@@ -158,14 +129,6 @@ class FocalLoss(nn.Module):
         self.cross_entropy = nn.CrossEntropyLoss(weight=alpha, reduction="none")
 
     def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
-        """
-        Args:
-            logits: Model outputs of shape [batch_size, num_classes]
-            targets: Ground-truth class indices of shape [batch_size]
-
-        Returns:
-            Scalar loss if reduction is mean/sum, otherwise per-sample loss
-        """
         ce_loss = self.cross_entropy(logits, targets)
         pt = torch.exp(-ce_loss)
         focal_loss = ((1 - pt) ** self.gamma) * ce_loss
@@ -186,14 +149,6 @@ def build_loss_function(
     focal_loss_gamma: float = 2.0,
     class_weight_method: str = "balanced",
 ):
-    """
-    Build the appropriate loss function for training.
-
-    Options:
-    - Standard CrossEntropyLoss
-    - Weighted CrossEntropyLoss
-    - FocalLoss with optional class weights
-    """
     num_classes = len(class_counts)
     if num_classes == 0:
         raise ValueError("class_counts must not be empty.")
@@ -221,9 +176,8 @@ def summarize_imbalance(
     class_counts: List[int],
     class_names: List[str],
 ) -> Dict[str, Dict[str, float]]:
-    """
-    Return a readable summary of imbalance statistics.
-    """
+    #return a readable summary of imbalance statistics
+    
     if len(class_counts) != len(class_names):
         raise ValueError("class_counts and class_names must have the same length.")
 

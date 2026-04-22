@@ -71,7 +71,7 @@ def build_custom_cnn(
     input_channels: int = 3,
     dropout_rate: float = 0.5,
 ) -> CustomSkinDiseaseCNN:
-    #Helper function to build the custom CNN model.
+    #Helper function to build the custom CNN model.s
     return CustomSkinDiseaseCNN(
         num_classes=num_classes,
         input_channels=input_channels,

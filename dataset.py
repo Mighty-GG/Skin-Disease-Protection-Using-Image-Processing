@@ -1,5 +1,3 @@
-# dataset.py
-
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -11,28 +9,21 @@ VALID_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff", ".webp"}
 
 
 def is_image_file(file_path: Path) -> bool:
-    """
-    Return True if the file has a valid image extension.
-    """
+    #return true if the file has a valid image extension
     return file_path.suffix.lower() in VALID_EXTENSIONS
 
 
 def find_split_dir(root_dir: Path, split_name: str) -> Path:
-    """
-    Find a split directory in a case-insensitive way.
-    Examples:
-        train, Train, TRAIN
-        test, Test, TEST
-    """
+    #find a split directory in a case-insensitive way
     if not root_dir.exists():
         raise FileNotFoundError(f"Root dataset directory not found: {root_dir}")
 
-    # Exact match first
+    #exact match first
     exact = root_dir / split_name
     if exact.exists() and exact.is_dir():
         return exact
 
-    # Case-insensitive fallback
+    #case-insensitive fallback
     split_name_lower = split_name.lower()
     for item in root_dir.iterdir():
         if item.is_dir() and item.name.lower() == split_name_lower:
@@ -44,9 +35,7 @@ def find_split_dir(root_dir: Path, split_name: str) -> Path:
 
 
 def get_class_names_from_directory(split_dir: Path) -> List[str]:
-    """
-    Read class names from subfolder names and return them sorted.
-    """
+    #Read class names from subfolder names and return them sorted.
     class_names = sorted([item.name for item in split_dir.iterdir() if item.is_dir()])
 
     if not class_names:
@@ -56,26 +45,7 @@ def get_class_names_from_directory(split_dir: Path) -> List[str]:
 
 
 class SkinDiseaseDataset(Dataset):
-    """
-    PyTorch Dataset for folder-based skin disease classification.
-
-    Expected structure:
-        dataset_root/
-            Train/
-                Acne/
-                Actinic_Keratosis/
-                ...
-            Test/
-                Acne/
-                Actinic_Keratosis/
-                ...
-
-    or lowercase equivalents such as:
-        dataset_root/
-            train/
-            test/
-    """
-
+    #PyTorch Dataset for folder-based skin disease classification.
     def __init__(
         self,
         split_dir: Path,
@@ -83,14 +53,6 @@ class SkinDiseaseDataset(Dataset):
         transform=None,
         return_paths: bool = False,
     ) -> None:
-        """
-        Args:
-            split_dir: Path to a specific split folder, such as Train or Test.
-            class_names: Optional fixed class-name ordering.
-                         Use this to keep label indices consistent.
-            transform: torchvision transform pipeline.
-            return_paths: If True, __getitem__ returns (image, label, path).
-        """
         self.split_dir = Path(split_dir)
         self.transform = transform
         self.return_paths = return_paths
@@ -116,16 +78,15 @@ class SkinDiseaseDataset(Dataset):
             raise ValueError(f"No valid image files found in: {self.split_dir}")
 
     def _build_samples(self) -> List[Tuple[Path, int]]:
-        """
-        Build a list of (image_path, label_idx) samples from class folders.
-        """
+        #build a list of (image_path, label_idx) samples from class folders
+        
         samples: List[Tuple[Path, int]] = []
 
         for class_name in self.class_names:
             class_dir = self.split_dir / class_name
 
             if not class_dir.exists() or not class_dir.is_dir():
-                # Skip missing class folders silently so long as mapping stays consistent
+                #skip missing class folders silently so long as mapping stays consistent
                 continue
 
             for file_path in sorted(class_dir.rglob("*")):
@@ -154,9 +115,8 @@ class SkinDiseaseDataset(Dataset):
         return image, label
 
     def get_class_distribution(self) -> Dict[str, int]:
-        """
-        Return sample count for each class in this split.
-        """
+        #Return sample count for each class in this split.
+        
         distribution = {class_name: 0 for class_name in self.class_names}
 
         for _, label_idx in self.samples:
@@ -166,24 +126,17 @@ class SkinDiseaseDataset(Dataset):
         return distribution
 
     def get_num_classes(self) -> int:
-        """
-        Return number of classes.
-        """
+        #Return number of classes.
         return len(self.class_names)
 
     def get_class_names(self) -> List[str]:
-        """
-        Return class names in label-index order.
-        """
+        #Return class names in label-index order.
         return self.class_names
 
     def get_samples(self) -> List[Tuple[Path, int]]:
-        """
-        Return raw sample list.
-        """
+        #Return raw sample list.
         return self.samples
     
-    # Add this below the class in dataset.py
 
 def build_skin_disease_datasets(
     dataset_root: Path,
@@ -191,14 +144,7 @@ def build_skin_disease_datasets(
     test_transform=None,
     return_paths: bool = False,
 ):
-    """
-    Build train and test datasets from the dataset root directory.
-
-    Example expected root:
-        SkinDisease/
-            Train/
-            Test/
-    """
+    #Build train and test datasets from the dataset root directory.
     dataset_root = Path(dataset_root)
 
     train_dir = find_split_dir(dataset_root, "train")
